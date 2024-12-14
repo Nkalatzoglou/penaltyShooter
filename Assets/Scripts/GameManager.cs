@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
 
     public Camera mainCam;
     public bool StartCameraMov;
-    static float t = 0.0f;
 
     Vector3 cameraOrigPos;
     float fieldOfView;

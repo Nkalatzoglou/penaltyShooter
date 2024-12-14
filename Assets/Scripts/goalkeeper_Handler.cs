@@ -236,6 +236,7 @@ public class goalkeeper_Handler : MonoBehaviour
 
     public void StepChooseSide(string PostHelper)
     {
+        /*
         switch (PostHelper)
         {            
             //case "LowDownRight":
@@ -249,6 +250,7 @@ public class goalkeeper_Handler : MonoBehaviour
                 //break;
 
         }
+        */
     }
 
 
