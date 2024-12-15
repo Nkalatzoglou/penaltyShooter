@@ -251,7 +251,7 @@ public class GameManager : MonoBehaviour
         //set capture status
         int cointFlip=Random.Range(0,100);
 
-        if(cointFlip>40)
+        if(cointFlip>30)
         {
             LooseEverything=true;
             saveEverything=false;
