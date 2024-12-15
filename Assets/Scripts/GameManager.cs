@@ -6,6 +6,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     [Header("Keep Scores - UI")]
+    public int shoot_Counter;
     public int goal_Counter;
     public TextMeshProUGUI ScoreCounter;
      public Shooter_Handler PenaltyKicker;
@@ -60,6 +61,19 @@ public class GameManager : MonoBehaviour
 
     public Transition_Handler trans_Handler;
 
+    public enum GameStatus{
+        Runtime,
+        Pause
+    }
+
+    public GameStatus CurrentStatus;
+
+    public GameObject PauseMenu;
+
+    public LevelManager levelManager;
+    
+    public Transform endScreen;
+
 
 
     //public bool canshoot;
@@ -67,6 +81,8 @@ public class GameManager : MonoBehaviour
     private void Awake() {
         gameManager=this;
         mainCam = Camera.main;
+
+        levelManager = FindObjectOfType<LevelManager>();
 
         cameraOrigPos= mainCam.transform.position;
         fieldOfView=mainCam.fieldOfView;
@@ -95,6 +111,34 @@ public class GameManager : MonoBehaviour
             }
         }   
         */   
+    }
+
+    public void BackMainMenu()
+    {
+        Time.timeScale=1;
+        Debug.Log("MainMenu");
+        LevelManager.instance.LoadScene("MainMenu",3f);
+    }
+
+    public void RestartLevel()
+    {
+        Time.timeScale=1;
+        LevelManager.instance.LoadScene("GameScene",3f);
+    }
+
+    public void PauseScreen()
+    {
+        CurrentStatus=GameStatus.Pause;
+        Time.timeScale=0;
+        PauseMenu.SetActive(true);        
+    }
+
+    public void UnPauseScreen()
+    {      
+        CurrentStatus=GameStatus.Runtime;  
+        Time.timeScale=1;
+        PauseMenu.SetActive(false);
+
     }
 
     public void resetCamera()
@@ -149,12 +193,20 @@ public class GameManager : MonoBehaviour
             PenaltyKicker.GetComponent<Animator>().SetTrigger("Defeat1");
         }
 
+        ScoreController.instance.ShootResult("Lost");
+
+        shoot_Counter++;
+
     }
 
     public void isPenaltyScored()
     {
         checkSave = true;
         PenaltyKicker.GetComponent<Animator>().SetTrigger("Victory");
+
+        ScoreController.instance.ShootResult("Goal");
+
+        shoot_Counter++;
     }
 
     public void isPenaltyOutOrDokari()
@@ -171,6 +223,10 @@ public class GameManager : MonoBehaviour
         {
             PenaltyKicker.GetComponent<Animator>().SetTrigger("Defeat1");
         }
+
+        ScoreController.instance.ShootResult("Lost");
+
+        shoot_Counter++;
     }
     // Update is called once per frame
     void Update()
@@ -191,6 +247,27 @@ public class GameManager : MonoBehaviour
         
 
         trans_Handler.GetComponent<Animator>().SetTrigger("FadeOut");
+
+        //set capture status
+        int cointFlip=Random.Range(0,100);
+
+        if(cointFlip>40)
+        {
+            LooseEverything=true;
+            saveEverything=false;
+        }
+        else
+        {
+            LooseEverything=false;
+            saveEverything=true;
+        }
+
+        if(shoot_Counter==15)
+        {
+            endScreen.gameObject.SetActive(true);
+            Time.timeScale=0;
+            CurrentStatus= GameStatus.Pause;
+        }
         //SceneChanger();
         
     }

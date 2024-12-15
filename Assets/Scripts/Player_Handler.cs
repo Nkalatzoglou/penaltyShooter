@@ -67,14 +67,18 @@ public class Player_Handler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(currentType == PlayerType.shooter)
+        if(gamemanager.CurrentStatus == GameManager.GameStatus.Runtime && TrackMouseArea.instance.isMouseOver)
         {
-            Update_Shooter();
+            if(currentType == PlayerType.shooter)
+            {
+                Update_Shooter();
+            }
+            else
+            {
+                Update_GoalKeeper();
+            }
         }
-        else
-        {
-            Update_GoalKeeper();
-        }
+        
         
     }
 
