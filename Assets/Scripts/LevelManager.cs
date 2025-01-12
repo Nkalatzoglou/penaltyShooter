@@ -7,13 +7,13 @@ using UnityEngine.UI;
 
 public class LevelManager : MonoBehaviour
 {
-    public List<Scene> SceneList;
-    public static LevelManager instance;
+    [HideInInspector]public List<Scene> SceneList;
+    [HideInInspector]public static LevelManager instance;
 
-    [SerializeField] private GameObject _loaderCanvas;
-    [SerializeField] private Image _progressBar;
+    [HideInInspector] private GameObject _loaderCanvas;
+    [HideInInspector] private Image _progressBar;
 
-    public float _target;
+    [HideInInspector]public float _target;
 
     private IEnumerator loadCor;
 

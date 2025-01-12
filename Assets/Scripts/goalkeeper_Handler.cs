@@ -116,7 +116,7 @@ public class goalkeeper_Handler : MonoBehaviour
             }
 
             //Save everything
-            if(!GameManager.gameManager.LooseEverything)
+            if(!GameManager.gameManager.LooseShoot)
             {
                 Debug.Log("Save");
                 if(LeftOrRight == "Left")

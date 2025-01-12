@@ -43,6 +43,7 @@ public class Player_Handler : MonoBehaviour
 
     //Bool to run AI once and reset to rerun when needed
     private bool AICor;
+    public bool ApplyForce;
     
     void Start()
     {
@@ -82,6 +83,11 @@ public class Player_Handler : MonoBehaviour
         
     }
 
+    public void UpdateTarget(Transform targer)
+    {
+
+    }
+
     public void Update_Shooter()
     {
         //if not AI
@@ -102,8 +108,26 @@ public class Player_Handler : MonoBehaviour
             }
             if(Input.GetMouseButtonUp(0) && ButtonPress==1)
             {
-                StopAllCoroutines();
-                gamemanager.execute_Shoot();
+                //No Force Options
+                if(!ApplyForce)
+                {
+                    StopAllCoroutines();
+                    gamemanager.execute_Shoot(ApplyForce,0f); 
+                }
+                else
+                {
+                    StopAllCoroutines();
+                    CanvasHandler.instance.forceBarHandler.gameObject.SetActive(true);
+                    CanvasHandler.instance.ActivateForceBar();
+                    GameManager.gameManager.shooter_Handler.forceChangeDirection=Vector3.zero;
+                    ButtonPress++;
+                }                               
+            }
+            if(Input.GetMouseButtonDown(0) && ButtonPress==2)
+            {
+                //selectedTarget must be recalculated
+                Debug.Log("Force Selected :" + CanvasHandler.instance.StopBar().ToString());  
+                gamemanager.execute_Shoot(ApplyForce,CanvasHandler.instance.StopBar());              
             }
         }
         else
@@ -171,7 +195,7 @@ public class Player_Handler : MonoBehaviour
 
         StopCoroutine(moveCor);
         StopAllCoroutines();
-        gamemanager.execute_Shoot();
+        gamemanager.execute_Shoot(ApplyForce,0);
 
     }
     IEnumerator MoveObject(Transform thisTransform, Transform startPos, Vector3 endPos, float time)

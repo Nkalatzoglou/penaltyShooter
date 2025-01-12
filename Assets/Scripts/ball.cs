@@ -39,10 +39,10 @@ public class ball : MonoBehaviour
         rig.AddForce(Vector3.forward * force,ForceMode.Impulse);
     }
 
-    public void ShootForce_Direction(Transform target)
+    public void ShootForce_Direction(Transform target,Vector3 OffPositionXY)
     {
         transform.SetParent(null);
-        Vector3 Shoot = (target.position - this.transform.position).normalized;
+        Vector3 Shoot = ((target.position+OffPositionXY) - this.transform.position).normalized;
         rig.AddForce(Shoot * force + new Vector3(0,2f,0),ForceMode.Impulse);
         StartCoroutine(despawnAfterTime(DespawnTime));
     }

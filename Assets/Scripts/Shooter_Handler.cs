@@ -15,6 +15,8 @@ public class Shooter_Handler : MonoBehaviour
     private bool animationStarted;
 
     public Animator FadeOutScene;
+
+    public Vector3 forceChangeDirection;
     //public RigBuilder rig;
     // Start is called before the first frame update
     void Start()
@@ -67,7 +69,7 @@ public class Shooter_Handler : MonoBehaviour
             gamemanger.currentBall.ballWillBeCatched();
         }
 
-        gamemanger.currentBall.ShootForce_Direction(target);
+        gamemanger.currentBall.ShootForce_Direction(target,forceChangeDirection);
 
         if(!animationStarted && gamemanger.target_handler.whatSide()!="LowTop")
         {

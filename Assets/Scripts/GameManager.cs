@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -38,8 +39,9 @@ public class GameManager : MonoBehaviour
     public bool stopperEnabled;
 
     public bool saveEverything;
+    [HideInInspector]public bool saveShoot;
     
-    public bool LooseEverything;
+    [HideInInspector]public bool LooseShoot;
 
     public Transform MidMidHug;
 
@@ -73,6 +75,10 @@ public class GameManager : MonoBehaviour
     public LevelManager levelManager;
     
     public Transform endScreen;
+
+    public Shooter_Handler shooter_Handler;
+
+    public string SideSelected;
 
 
 
@@ -253,13 +259,19 @@ public class GameManager : MonoBehaviour
 
         if(cointFlip>30)
         {
-            LooseEverything=true;
-            saveEverything=false;
+            LooseShoot=true;
+            saveShoot=false;
         }
         else
         {
-            LooseEverything=false;
-            saveEverything=true;
+            LooseShoot=false;
+            saveShoot=true;
+        }
+
+        if(saveEverything)
+        {
+            LooseShoot=false;
+            saveShoot=true;
         }
 
         if(shoot_Counter==15)
@@ -268,6 +280,8 @@ public class GameManager : MonoBehaviour
             Time.timeScale=0;
             CurrentStatus= GameStatus.Pause;
         }
+
+        
         //SceneChanger();
         
     }
@@ -300,28 +314,64 @@ public class GameManager : MonoBehaviour
         TargetName=target.name;
     }
 
-    public void execute_Shoot()
+    public void execute_Shoot(bool applyForce,float force)
     {
         
-        if(!PenaltyKicker.shooting)
+        if(!applyForce)
         {
-            target_handler.markSide();
-            PenaltyKicker.startShootBallAnimation();
-            goalKeeperSave_AI_Step();
+            if(!PenaltyKicker.shooting)
+            {
+                target_handler.markSide();
+                PenaltyKicker.startShootBallAnimation();
+                goalKeeperSave_AI_Step();
+            }
             
-            //StartCoroutine(SceneChanger());
-
         }
+        else
+        {
+            if(!PenaltyKicker.shooting)
+            {
+                //Calculate diretction
+                var offDire = CalculateNewPositionY(force);
+                gameManager.shooter_Handler.forceChangeDirection=offDire;
+
+                //Currently not recognized by goalkeeer, no ray to detect
+                target_handler.markSide();
+                PenaltyKicker.startShootBallAnimation();
+                goalKeeperSave_AI_Step();
+
+            }
+        }
+
         GoalKeeperFinished=false;
         PenaltyKickerFinished=false;
-        StartCoroutine(ShootCoroutine());
+        StartCoroutine(ShootCoroutine());    
 
 
     }
 
+    public Vector3 CalculateNewPositionY(float force)
+    {
+        var offDire = new Vector3(0,0,0);        
+        //maximum off on Y 
+        if(Mathf.Abs(force)>0.15f)
+        {
+            var newY= Mathf.Abs(force)*4.5f;
+            offDire= new Vector3(offDire.x,newY,offDire.z);
+            Debug.Log("Changes");
+        }
+        else
+        {
+            Debug.Log("No Change");
+        }
+        //else dont change is on green
+        
+        return offDire;
+    }
+
     public void Activate_SaveEverything()
     {
-        if(saveEverything &&  target_handler.currentSelection!=null)
+        if(saveShoot &&  target_handler.currentSelection!=null)
         {
             target_handler.currentSelection.GetComponent<BoxCollider>().isTrigger=false;
         }
@@ -329,7 +379,7 @@ public class GameManager : MonoBehaviour
 
     public void Disactivate_SaveEverything()
     {
-        if(saveEverything &&  target_handler.currentSelection!=null)
+        if(saveShoot &&  target_handler.currentSelection!=null)
         {
             target_handler.currentSelection.GetComponent<BoxCollider>().isTrigger=true;
         }
@@ -403,6 +453,8 @@ public class GameManager : MonoBehaviour
 
         //Debug.Log("Reset Shooting  Coroutine");
         target_handler.resetToOriginal();
+
+        CanvasHandler.instance.forceBarHandler.gameObject.SetActive(false);
 
         if(Player_Handler.is_Shooter_AI)
         {

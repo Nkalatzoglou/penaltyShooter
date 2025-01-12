@@ -40,10 +40,28 @@ public class target_Handler : MonoBehaviour
     }
 
 
+    public void markSide(GameObject newSelection)
+    {
+        currentSelection = newSelection;
+        if(currentSelection!=null)
+        {
+            getSide();
+            origColor= currentSelection.GetComponent<MeshRenderer>().material.color;
+            currentSelection.GetComponent<MeshRenderer>().material.color=TargetColor;
+        }
+
+    }
+
+    public void getSide()
+    {
+        GameManager.gameManager.SideSelected= currentSelection.transform.parent.name;
+    }
+
     public void markSide()
     {
         if(currentSelection!=null)
         {
+            getSide();
             origColor= currentSelection.GetComponent<MeshRenderer>().material.color;
             currentSelection.GetComponent<MeshRenderer>().material.color=TargetColor;
         }
