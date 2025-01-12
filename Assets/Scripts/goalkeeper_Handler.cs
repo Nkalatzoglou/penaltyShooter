@@ -76,12 +76,12 @@ public class goalkeeper_Handler : MonoBehaviour
     {
         gamemanger.GoalKeeperFinished=true;
     }
-    
-    public void ChooseSide(string PostHelper,string LeftOrRight)
+
+        public void CalculateSide(string PostHelper,string LeftOrRight)
     {
         //Double Animation 
          Side=LeftOrRight;
-         
+         //fix cause animations are reversed
         if(PostHelper =="LargeDown")
         {
             //Here we have two animation
@@ -89,8 +89,12 @@ public class goalkeeper_Handler : MonoBehaviour
             float fliCoin= Random.Range(0,100);
             if(fliCoin>50)
             {
-                PostHelper=PostHelper+"2";
+                PostHelper=PostHelper+"2";               
+               
+            }
 
+            if(PostHelper =="LargeDown")
+            {
                 //Reverse since animation is reversed
                 if(LeftOrRight == "Left")
                 {
@@ -100,9 +104,164 @@ public class goalkeeper_Handler : MonoBehaviour
                 else
                 {
                     LeftOrRight = "Left";
-                }   
+                }  
+            }              
+            
+        }
+
+        if(PostHelper =="LowDown")
+        {
+            //Here we have two animation
+            //LargeDown and LargeDown2
+            //Reverse since animation is reversed
+            if(LeftOrRight == "Left")
+            {
+                LeftOrRight="Right";
+                    
+            }
+            else
+            {
+                LeftOrRight = "Left";
+            }  
+            
+        }
+
+        //GameManager.gameManager.Activate_SaveEverything();
+
+        if(PostHelper!="NoTarget")
+        {
+            if(GoalKeeperCollider!=null)
+            {
+                GoalKeeperCollider.enabled=true;
+            }
+
+            //Save everything
+            if(!GameManager.gameManager.LooseShoot)
+            {
+                Debug.Log("Save");
+                if(LeftOrRight == "Left")
+                {
+                    //Debug.Log("Left");
+                    var x = goalKeepAnimator.transform.localScale.x;
+
+                    
+                    if(x>0)
+                    {
+                        goalKeepAnimator.transform.localScale = new Vector3(-x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                    }
+
+
+                }
+                else
+                {
+                    //Debug.Log("Right");
+                    var x = goalKeepAnimator.transform.localScale.x;
+
+                    
+                    if(x<0)
+                    {
+                        goalKeepAnimator.transform.localScale = new Vector3(-x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                    }
+                    
+                }
+
+            }
+            //LooseEveryting Dive on Other Side
+            else
+            {
+                Debug.Log("Loose");
+                if(GoalKeeperCollider!=null)
+                {
+                    GoalKeeperCollider.enabled=false;
+                }
+
+                var flipCoin4Dir = Random.Range(0,100);
+
+                var x = goalKeepAnimator.transform.localScale.x;
+
+                if(flipCoin4Dir>50)
+                {
+                    goalKeepAnimator.transform.localScale = new Vector3(-x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                }
+                else
+                {
+                    goalKeepAnimator.transform.localScale = new Vector3(x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                }                
+            }
+                        
+        }
+        else
+        //No target jump random
+        {
+            Debug.Log("Loose");
+                if(GoalKeeperCollider!=null)
+                {
+                    GoalKeeperCollider.enabled=false;
+                }
+
+                var flipCoin4Dir = Random.Range(0,100);
+
+                var x = goalKeepAnimator.transform.localScale.x;
+
+                if(flipCoin4Dir>50)
+                {
+                    goalKeepAnimator.transform.localScale = new Vector3(-x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                }
+                else
+                {
+                    goalKeepAnimator.transform.localScale = new Vector3(x,goalKeepAnimator.transform.localScale.y,goalKeepAnimator.transform.localScale.z);
+                }
+
+        }        
+        
+    }
+    
+    public void ChooseSide(string PostHelper,string LeftOrRight)
+    {
+        //Double Animation 
+         Side=LeftOrRight;
+         //fix cause animations are reversed
+        if(PostHelper =="LargeDown")
+        {
+            //Here we have two animation
+            //LargeDown and LargeDown2
+            float fliCoin= Random.Range(0,100);
+            if(fliCoin>50)
+            {
+                PostHelper=PostHelper+"2";               
                
             }
+
+            if(PostHelper =="LargeDown")
+            {
+                //Reverse since animation is reversed
+                if(LeftOrRight == "Left")
+                {
+                    LeftOrRight="Right";
+                    
+                }
+                else
+                {
+                    LeftOrRight = "Left";
+                }  
+            }              
+            
+        }
+
+        if(PostHelper =="LowDown")
+        {
+            //Here we have two animation
+            //LargeDown and LargeDown2
+            //Reverse since animation is reversed
+            if(LeftOrRight == "Left")
+            {
+                LeftOrRight="Right";
+                    
+            }
+            else
+            {
+                LeftOrRight = "Left";
+            }  
             
         }
 

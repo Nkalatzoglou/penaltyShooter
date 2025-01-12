@@ -39,9 +39,9 @@ public class GameManager : MonoBehaviour
     public bool stopperEnabled;
 
     public bool saveEverything;
-    [HideInInspector]public bool saveShoot;
+    public bool saveShoot;
     
-    [HideInInspector]public bool LooseShoot;
+    public bool LooseShoot;
 
     public Transform MidMidHug;
 
@@ -253,7 +253,7 @@ public class GameManager : MonoBehaviour
         
 
         trans_Handler.GetComponent<Animator>().SetTrigger("FadeOut");
-
+        
         //set capture status
         int cointFlip=Random.Range(0,100);
 
@@ -315,8 +315,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void execute_Shoot(bool applyForce,float force)
-    {
-        
+    {        
         if(!applyForce)
         {
             if(!PenaltyKicker.shooting)
@@ -336,6 +335,8 @@ public class GameManager : MonoBehaviour
                 gameManager.shooter_Handler.forceChangeDirection=offDire;
 
                 //Currently not recognized by goalkeeer, no ray to detect
+                target_handler.recalculatePosition(offDire);
+
                 target_handler.markSide();
                 PenaltyKicker.startShootBallAnimation();
                 goalKeeperSave_AI_Step();
@@ -437,9 +438,7 @@ public class GameManager : MonoBehaviour
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Victory");
         PenaltyKicker.GetComponent<Animator>().SetTrigger("Reset");
 
-        resetCamera();
-
-        
+        resetCamera();        
 
         checkSave = false;
         checkGoal = false;

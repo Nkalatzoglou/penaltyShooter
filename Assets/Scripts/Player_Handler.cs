@@ -149,6 +149,12 @@ public class Player_Handler : MonoBehaviour
 
     }
 
+    public IEnumerator waitNextFrame()
+    {
+        yield return new WaitForEndOfFrame();
+
+    }
+
     public void Update_GoalKeeper()
     {
         //Debug.Log("I am GoalKeeper");

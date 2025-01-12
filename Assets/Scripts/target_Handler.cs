@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class target_Handler : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class target_Handler : MonoBehaviour
     public Color TargetColor;
 
     public Color origColor;
+    public static target_Handler instance;
+
+    public GameObject cubeDebugPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -21,8 +25,34 @@ public class target_Handler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var fromPosition = new Vector3 (transform.position.x,transform.position.y,transform.position.z+5);
-        var toPosition = transform.position;
+        if(!GameManager.gameManager.Player_Handler.ApplyForce)
+        {
+            var fromPosition = new Vector3 (transform.position.x,transform.position.y,transform.position.z+5);
+            var toPosition = transform.position;
+
+            var direction = toPosition-fromPosition;
+
+            RaycastHit hit;
+
+            if(Physics.Raycast(fromPosition,direction,out hit,7f,PostHelpers))
+            {
+                currentSelection =hit.collider.gameObject;
+                currentPos=hit.point;
+            }
+            else
+            {
+                currentSelection =null;
+            }
+
+        }
+        
+    }
+
+    public void recalculatePosition(Vector3 position)
+    {
+        var newPosition = transform.position + position;
+        var fromPosition = new Vector3 (newPosition.x,newPosition.y,newPosition.z+5);        
+        var toPosition = newPosition;
 
         var direction = toPosition-fromPosition;
 
@@ -37,6 +67,8 @@ public class target_Handler : MonoBehaviour
         {
             currentSelection =null;
         }
+
+        Debug.Log("Recalculation");
     }
 
 
