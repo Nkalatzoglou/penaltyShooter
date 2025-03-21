@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public int shoot_Counter;
     public int goal_Counter;
     public TextMeshProUGUI ScoreCounter;
+
+    public TextMeshProUGUI countdownText;
      public Shooter_Handler PenaltyKicker;
 
     public Player_Handler Player_Handler;
@@ -63,6 +65,7 @@ public class GameManager : MonoBehaviour
 
     public Transition_Handler trans_Handler;
 
+
     public enum GameStatus{
         Runtime,
         Pause
@@ -80,7 +83,9 @@ public class GameManager : MonoBehaviour
 
     public string SideSelected;
 
+    public float pointsPerGoal=10;
 
+    public Coroutine coroutineTimer;
 
     //public bool canshoot;
     // Start is called before the first frame update
@@ -95,7 +100,10 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-
+        if(coroutineTimer==null)
+        {
+            coroutineTimer=StartCoroutine(CountdownCoroutine(15f,false));
+        }
     }
     private void FixedUpdate() {
         Time.timeScale = gamespeed;  
@@ -152,6 +160,8 @@ public class GameManager : MonoBehaviour
 
         mainCam.transform.position = cameraOrigPos;
         mainCam.fieldOfView = fieldOfView;
+
+        StartCoroutine(CountdownCoroutine(15,true));
     }
 
     public void StartCameraZoomEffect(Vector3 targetPosition,float endValue,float duration)
@@ -316,6 +326,11 @@ public class GameManager : MonoBehaviour
 
     public void execute_Shoot(bool applyForce,float force)
     {        
+        if(coroutineTimer!=null)
+        {
+            StopAllCoroutines();
+            coroutineTimer=null;
+        }
         if(!applyForce)
         {
             if(!PenaltyKicker.shooting)
@@ -399,8 +414,37 @@ public class GameManager : MonoBehaviour
     public void addGoal()
     {
         goal_Counter =goal_Counter+1;
-        ScoreCounter.text = goal_Counter.ToString();
+        ScoreCounter.text = (goal_Counter*10).ToString();
 
+    }
+
+    private IEnumerator CountdownCoroutine(float startTime,bool applyDelay)
+    {
+        if(applyDelay)
+        {
+            yield return new WaitForSeconds(1);
+        }
+        float timer = startTime;
+
+        // Loop until the timer reaches zero
+        while (timer > 0)
+        {
+            // Update the countdown text
+            var timerText=(int)timer;
+            countdownText.text = timerText.ToString(); // Displaying one decimal place
+
+            // Wait for a short period before updating again
+            yield return new WaitForSeconds(0.1f); 
+
+            // Decrease the timer by 0.1 each time (you can adjust this to your needs)
+            timer -= 0.1f;
+        }
+
+        // Ensure the countdown reaches zero exactly and display "0"
+        countdownText.text = "0";
+        
+        // Optionally, you can add a callback or trigger an event when the countdown is complete
+        Debug.Log("Countdown finished!");
     }
 
     /*
