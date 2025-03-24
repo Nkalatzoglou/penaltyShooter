@@ -326,11 +326,9 @@ public class GameManager : MonoBehaviour
 
     public void execute_Shoot(bool applyForce,float force)
     {        
-        if(coroutineTimer!=null)
-        {
-            StopAllCoroutines();
-            coroutineTimer=null;
-        }
+        StopAllCoroutines();
+        coroutineTimer=null;
+        
         if(!applyForce)
         {
             if(!PenaltyKicker.shooting)
