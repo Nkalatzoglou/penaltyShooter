@@ -47,6 +47,37 @@ public class ball : MonoBehaviour
         StartCoroutine(despawnAfterTime(DespawnTime));
     }
 
+    public void ShootWithCurl(Transform target, Vector3 offPositionXY, Vector3 curlOffset, float curlForceMultiplier)
+    {
+        transform.SetParent(null);
+
+        // Step 1: Define positions
+        Vector3 startPosition = this.transform.position;
+        Vector3 curlPosition = startPosition + curlOffset; // Add an offset for the curl position
+        Vector3 targetPosition = target.position + offPositionXY;
+
+        // Step 2: Apply force to curl position
+        Vector3 directionToCurl = (curlPosition - startPosition).normalized;
+        rig.AddForce(directionToCurl * (force * curlForceMultiplier), ForceMode.Impulse);
+
+        // Step 3: Wait for the ball to reach or pass near the curl position
+        StartCoroutine(ProceedToTarget(curlPosition, targetPosition));
+    }
+
+    private IEnumerator ProceedToTarget(Vector3 curlPosition, Vector3 targetPosition)
+    {
+        // Wait for ball to pass the curl position
+        while (Vector3.Distance(this.transform.position, curlPosition) > 0.5f)
+        {
+            yield return null; // Wait for the next frame
+        }
+
+        // Step 4: Apply force toward the target position
+        Vector3 directionToTarget = (targetPosition - this.transform.position).normalized;
+        rig.AddForce(directionToTarget * force, ForceMode.Impulse);
+    }
+
+
     public void ballWillBeCatched()
     {
         catchBall=true;
@@ -57,8 +88,14 @@ public class ball : MonoBehaviour
     //Cause
     private void OnTriggerEnter(Collider other) {
         //Debug.Log("Test");
-        if(other.gameObject.CompareTag("GoalPost"))
+        if(other.gameObject.CompareTag("GoalPost") && Scored==false)
         {
+            if(GameManager.gameManager.goldenBall)
+            {
+                PowerUpHandler.instnace.particleCollisionPassThrought.transform.SetParent(null);
+                PowerUpHandler.instnace.particleCollisionPassThrought.gameObject.SetActive(true);
+                PowerUpHandler.instnace.particleBall_smoke.gameObject.SetActive(false);                
+            }
             Scored = true;
             GameManager.gameManager.isPenaltyScored();
             //Debug.Log("Goaaal");

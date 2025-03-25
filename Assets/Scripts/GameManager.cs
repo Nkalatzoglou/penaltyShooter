@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEditor;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
+    public bool goldenBall;
+    public bool hideIndicator;
+    public AudioSource mainSound;
     public bool SecondChance;
     public int scoreCounter=0;
     public int multiplyScore=1;
@@ -225,7 +229,6 @@ public class GameManager : MonoBehaviour
     {
         checkSave = true;
         PenaltyKicker.GetComponent<Animator>().SetTrigger("Victory");
-
         ScoreController.instance.ShootResult("Goal");
 
         shoot_Counter++;
@@ -330,9 +333,21 @@ public class GameManager : MonoBehaviour
     {
         TargetName=target.name;
     }
+    
+    IEnumerator WaitAndRun(System.Action action)
+    {
+        yield return new WaitForSeconds(1.5f);
+        action();
+    }
 
     public void execute_Shoot(bool applyForce,float force)
     {        
+        if(hideIndicator)
+        {
+            CanvasHandler.instance.PowerUpIndicator.GetComponent<Animator>().SetTrigger("Hide"); 
+            hideIndicator=false;          
+        }
+
         StopAllCoroutines();
         coroutineTimer=null;
 
@@ -483,6 +498,12 @@ public class GameManager : MonoBehaviour
 
         //scene changer coroutine
         //Reset Scene
+        goldenBall=false;
+        PowerUpHandler.instnace.ResetPowerUp();
+
+        PowerUpHandler.instnace.DisableGoldenBall();
+        PowerUpHandler.instnace.DisactivateDoublePoints();
+
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Defeat1");
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Defeat2");
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Victory");

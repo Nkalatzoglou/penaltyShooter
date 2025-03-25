@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cdb5fee402961d44b8596c9ea49fc346, type: 3}
   m_Name: 2nd Chance
   m_EditorClassIdentifier: 
-  powerUpName: Calm Down
+  powerUpName: 2nd Chance
   powerUpImage: {fileID: 21300000, guid: fe2f5ec2ca1931f4c883c96f48bdcca9, type: 3}
   description: Allows players to retake a missed shot.

@@ -15,7 +15,7 @@ public class ForceBarHandler : MonoBehaviour
     
     public Transform movingTransform; // The Transform that will move
     public float speed = 1.0f;        // Speed of movement
-     public float OriginSpeed = 1.0f;  
+     [HideInInspector]public float OriginSpeed = 1.0f;  
 
     public float currentValue = 0.0f; // Tracks the float value between -1 and 1
     private bool isStopped = false;   // Whether the movement is stopped

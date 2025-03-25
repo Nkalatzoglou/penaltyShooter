@@ -130,7 +130,7 @@ public class goalkeeper_Handler : MonoBehaviour
 
         if(PostHelper!="NoTarget")
         {
-            if(GoalKeeperCollider!=null)
+            if(GoalKeeperCollider!=null && !GameManager.gameManager.goldenBall)
             {
                 GoalKeeperCollider.enabled=true;
             }
@@ -269,7 +269,7 @@ public class goalkeeper_Handler : MonoBehaviour
 
         if(PostHelper!="NoTarget")
         {
-            if(GoalKeeperCollider!=null)
+            if(GoalKeeperCollider!=null && !GameManager.gameManager.goldenBall)
             {
                 GoalKeeperCollider.enabled=true;
             }

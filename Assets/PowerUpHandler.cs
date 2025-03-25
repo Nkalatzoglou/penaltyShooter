@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class PowerUpHandler : MonoBehaviour
 {
+    public static PowerUpHandler instnace;
     public AudioSource audioSource;
     public List<PowerUpItemHandler> PowerUps;
 
@@ -24,9 +25,11 @@ public class PowerUpHandler : MonoBehaviour
     public MeshRenderer Ball;
     public GameObject particleBall_smoke;
 
-    [Header("Double Points")]
+    public AudioClip GoldenBallSound;
 
-    public Animator UIAnimator;
+    public Transform parentOfExplosion;
+
+    [Header("Double Points")]
 
     [Header("Calm Down")]
 
@@ -50,12 +53,14 @@ public class PowerUpHandler : MonoBehaviour
 
     private void Awake() 
     {
+        instnace=this;
         ShuffleAndAssignPowerUps();
         audioSource=GetComponent<AudioSource>();
     }
     void Start()
     {
-        
+        AssignTwoAmount();
+         AssignTwoAmount();
     }
 
     // Update is called once per frame
@@ -86,7 +91,7 @@ public class PowerUpHandler : MonoBehaviour
     //When release ball
     public void Activate2ndChance_Vol2()
     {
-        audioSource.PlayOneShot(sfirixta);
+        RefereHumanoid.GetComponent<AudioSource>().PlayOneShot(sfirixta);
     }
 
     //When Reset Scene
@@ -109,29 +114,50 @@ public class PowerUpHandler : MonoBehaviour
     public void ActivateCalmDown()
     {
         ForceBarHandler.instance.speed=0.5f;
-        ForceBarHandler.instance.SoundBar.pitch=0.8f;
+        GameManager.gameManager.mainSound.pitch=0.8f;
     }
 
     public void DisableCalmDown()
     {
         ForceBarHandler.instance.speed=ForceBarHandler.instance.OriginSpeed;
-        ForceBarHandler.instance.SoundBar.pitch=1f;
+        GameManager.gameManager.mainSound.pitch=1f;
     }
 
     public void ActivateDoublePoints()
     {
         GameManager.gameManager.multiplyScore=2;
-        UIAnimator.SetTrigger("Double");
     }
 
     public void DisactivateDoublePoints()
     {
         GameManager.gameManager.multiplyScore=1;
-        UIAnimator.SetTrigger("Normal");
+    }
+
+    //add 2 to all for testing
+    public void AssignTwoAmount()
+    {
+        foreach(PowerUpItemHandler pUp in PowerUps)
+        {
+            AddPowerUp(pUp.name);
+        }
+    }
+
+    public void AddPowerUp(string nameOfPowerUp)
+    {
+        foreach(PowerUpItemHandler pUp in PowerUps)
+        {
+            if(pUp.name==nameOfPowerUp)
+            {
+                pUp.amount++;
+                Debug.Log("test");
+                pUp.UpdateTextAmount();
+            }
+        }
     }
 
     public void ActivateGoldenBall()
     {
+        audioSource.PlayOneShot(GoldenBallSound);
         Ball=GameManager.gameManager.currentBall.transform.GetChild(0).GetComponent<MeshRenderer>();
         particleBall_smoke = GameManager.gameManager.currentBall.transform.GetChild(1).gameObject;
         particleBall_smoke.SetActive(true);
@@ -140,6 +166,7 @@ public class PowerUpHandler : MonoBehaviour
         GameManager.gameManager.saveEverything=true;
 
         //dissable Colliders
+        GameManager.gameManager.goldenBall=true;
         mainCollider.enabled=false;
         LeftCollider.enabled=false;
         RightCollider.enabled=false;
@@ -147,9 +174,15 @@ public class PowerUpHandler : MonoBehaviour
         BallOriginMat= Ball.material;
         Ball.material=GoldenBall;
         particleBall_smoke.SetActive(true);
+
+        BallParticle.gameObject.SetActive(true);
+
+        var ballObj=Ball.transform.parent.gameObject;
+        var Goalkeeper = mainCollider.transform.parent.gameObject;
         
-        particleCollisionPassThrought.gameObject.SetActive(true);
     }
+
+
 
     public void DisableGoldenBall()
     {
@@ -158,8 +191,12 @@ public class PowerUpHandler : MonoBehaviour
         LeftCollider.enabled=true;
         RightCollider.enabled=true; 
 
-        Ball.material=BallOriginMat;
-        particleBall_smoke.SetActive(false);         
+        BallParticle.gameObject.SetActive(false);
+
+        particleCollisionPassThrought.transform.SetParent(parentOfExplosion);
+
+        //Ball.material=BallOriginMat;
+        //particleBall_smoke.SetActive(false);         
     
         particleCollisionPassThrought.gameObject.SetActive(false);   
     }
@@ -170,12 +207,30 @@ public class PowerUpHandler : MonoBehaviour
         {
             if(powerUp!=pUp)
             {
-                pUp.GetComponent<Button>().interactable=false;
+                pUp.GetComponent<Button>().interactable=false;                
 
             }
             else
             {
+                CanvasHandler.instance.ActivateIndicator(powerUp.scriptableData);
+                //ActivatePowerUp
+                switch(powerUp.name)
+                {
+                    case "Golden Ball":
+                        ActivateGoldenBall();
+                        break;
+                    case "Double Points":
+                        ActivateDoublePoints();
+                        break;
+                    case "Catch the Bird":
+                        break;
+                    case "Calm Down":
+                        break;
+                    case "2nd Chance":
+                        break;                        
+                }
                 pUp.amount--;
+                pUp.UpdateTextAmount();
             }
         }
     }
@@ -187,6 +242,10 @@ public class PowerUpHandler : MonoBehaviour
             if(pUp.amount>0)
             {
                 pUp.GetComponent<Button>().interactable=true;
+            }
+            else
+            {
+                pUp.GetComponent<Button>().interactable=false;
             }
         }
     }

@@ -35,6 +35,7 @@ public class BallSpawner : MonoBehaviour
                
         gameManager.currentBall = transform.GetChild(0).GetComponent<ball>();
         gameManager.currentBall.gameObject.SetActive(true);
+        gameManager.currentBall.GetComponent<CapsuleCollider>().enabled=true;
     }
 
 

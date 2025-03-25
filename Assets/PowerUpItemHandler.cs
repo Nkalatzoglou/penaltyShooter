@@ -31,6 +31,11 @@ public class PowerUpItemHandler : MonoBehaviour
  
     }
 
+    public void UpdateTextAmount()
+    {
+        amountText.text=amount.ToString();
+    }
+
     public void UnLock()
     {
         this.gameObject.GetComponent<Button>().enabled=true;
