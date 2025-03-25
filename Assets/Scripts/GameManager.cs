@@ -6,6 +6,11 @@ using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
+    public int scoreCounter=0;
+    public int multiplyScore=1;
+    public int BasicScore=10;
+    public int AdditionalScore=0;
+
     [Header("Keep Scores - UI")]
     public int shoot_Counter;
     public int goal_Counter;
@@ -263,6 +268,7 @@ public class GameManager : MonoBehaviour
         
 
         trans_Handler.GetComponent<Animator>().SetTrigger("FadeOut");
+        trans_Handler.UIFadeOut.GetComponent<Animator>().SetTrigger("FadeOut");
         
         //set capture status
         int cointFlip=Random.Range(0,100);
@@ -328,7 +334,7 @@ public class GameManager : MonoBehaviour
     {        
         StopAllCoroutines();
         coroutineTimer=null;
-        
+
         if(!applyForce)
         {
             if(!PenaltyKicker.shooting)
@@ -412,7 +418,8 @@ public class GameManager : MonoBehaviour
     public void addGoal()
     {
         goal_Counter =goal_Counter+1;
-        ScoreCounter.text = (goal_Counter*10).ToString();
+        scoreCounter = scoreCounter + multiplyScore*BasicScore+AdditionalScore;
+        ScoreCounter.text = scoreCounter.ToString();
 
     }
 
