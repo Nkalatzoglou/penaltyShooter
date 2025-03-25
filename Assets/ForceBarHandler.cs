@@ -1,12 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
 public class ForceBarHandler : MonoBehaviour
 {
+    public static ForceBarHandler instance;
+
+    void Awake()
+    {
+        instance = this;
+    }
+    
     public Transform movingTransform; // The Transform that will move
     public float speed = 1.0f;        // Speed of movement
+     public float OriginSpeed = 1.0f;  
 
     public float currentValue = 0.0f; // Tracks the float value between -1 and 1
     private bool isStopped = false;   // Whether the movement is stopped
@@ -14,6 +23,8 @@ public class ForceBarHandler : MonoBehaviour
 
     private const float minX = -155; // X position corresponding to -1
     private const float maxX = 155;  // X position corresponding to +1
+
+    public AudioSource SoundBar;
 
     void Start()
     {

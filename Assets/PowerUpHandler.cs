@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PowerUpHandler : MonoBehaviour
 {
+    public AudioSource audioSource;
     public List<PowerUpItemHandler> PowerUps;
 
     public List<PowerUp> ListOfPowerUps;
@@ -16,21 +18,41 @@ public class PowerUpHandler : MonoBehaviour
     public BoxCollider LeftCollider;
     public BoxCollider RightCollider;
     public GameObject particleCollisionPassThrought;
-    public MeshRenderer Ball;
+    public GameObject BallParticle;    
     private Material BallOriginMat;
     public Material GoldenBall;
-    public GameObject particleBall;
+    public MeshRenderer Ball;
     public GameObject particleBall_smoke;
 
     [Header("Double Points")]
 
     public Animator UIAnimator;
 
+    [Header("Calm Down")]
+
+    public float speed=0.5f;
+
+    [Header("2nd Chance")]
+
+    public Transform RefereHumanoid;
+
+    public AudioClip sfirixta;
+    public Transform UISfirixta2ndChance;
+
+    public float secondToShowUi=5f;
+
+    [Header("FlyingBird")]
+    public GameObject Bird; //Logic to Move around and Detect Collision
+
+    public int additionalPoints=100;
+
     // Start is called before the first frame update
 
-    private void Awake() {
+    private void Awake() 
+    {
         ShuffleAndAssignPowerUps();
-            }
+        audioSource=GetComponent<AudioSource>();
+    }
     void Start()
     {
         
@@ -40,6 +62,60 @@ public class PowerUpHandler : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void ActivateFlyingBird()
+    {
+        GameManager.gameManager.AdditionalScore=additionalPoints;
+        Bird.gameObject.SetActive(true);
+    }
+
+    public void DisableFlyingBird()
+    {
+        GameManager.gameManager.AdditionalScore=0;
+        Bird.gameObject.SetActive(false);
+    }
+
+    //When PRess
+    public void Activate2ndChance_Vol1()
+    {
+        RefereHumanoid.gameObject.SetActive(true);
+        GameManager.gameManager.SecondChance=true;
+    }
+
+    //When release ball
+    public void Activate2ndChance_Vol2()
+    {
+        audioSource.PlayOneShot(sfirixta);
+    }
+
+    //When Reset Scene
+    public void Activate2ndChance_Vol3()
+    {
+        UISfirixta2ndChance.gameObject.SetActive(true);
+        RefereHumanoid.gameObject.SetActive(false);  
+
+        StartCoroutine(SecondChance());      
+    }
+
+    IEnumerator SecondChance()
+    {
+        yield return new WaitForSeconds(secondToShowUi);
+
+        UISfirixta2ndChance.gameObject.SetActive(false);
+        GameManager.gameManager.SecondChance=false;
+    }
+
+    public void ActivateCalmDown()
+    {
+        ForceBarHandler.instance.speed=0.5f;
+        ForceBarHandler.instance.SoundBar.pitch=0.8f;
+    }
+
+    public void DisableCalmDown()
+    {
+        ForceBarHandler.instance.speed=ForceBarHandler.instance.OriginSpeed;
+        ForceBarHandler.instance.SoundBar.pitch=1f;
     }
 
     public void ActivateDoublePoints()
@@ -56,6 +132,10 @@ public class PowerUpHandler : MonoBehaviour
 
     public void ActivateGoldenBall()
     {
+        Ball=GameManager.gameManager.currentBall.transform.GetChild(0).GetComponent<MeshRenderer>();
+        particleBall_smoke = GameManager.gameManager.currentBall.transform.GetChild(1).gameObject;
+        particleBall_smoke.SetActive(true);
+
         //Gaolkeeper will go to correct place but the ball will pass through him
         GameManager.gameManager.saveEverything=true;
 
@@ -66,7 +146,6 @@ public class PowerUpHandler : MonoBehaviour
 
         BallOriginMat= Ball.material;
         Ball.material=GoldenBall;
-        particleBall.SetActive(true);
         particleBall_smoke.SetActive(true);
         
         particleCollisionPassThrought.gameObject.SetActive(true);
@@ -80,7 +159,6 @@ public class PowerUpHandler : MonoBehaviour
         RightCollider.enabled=true; 
 
         Ball.material=BallOriginMat;
-        particleBall.SetActive(false);
         particleBall_smoke.SetActive(false);         
     
         particleCollisionPassThrought.gameObject.SetActive(false);   

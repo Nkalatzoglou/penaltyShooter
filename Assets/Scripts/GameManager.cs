@@ -6,6 +6,7 @@ using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
+    public bool SecondChance;
     public int scoreCounter=0;
     public int multiplyScore=1;
     public int BasicScore=10;
@@ -290,7 +291,7 @@ public class GameManager : MonoBehaviour
             saveShoot=true;
         }
 
-        if(shoot_Counter==15)
+        if(shoot_Counter==20)
         {
             endScreen.gameObject.SetActive(true);
             Time.timeScale=0;

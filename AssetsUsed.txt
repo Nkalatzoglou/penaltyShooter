@@ -18,6 +18,13 @@ https://www.mixamo.com/#/?page=1&type=Character
 Materials
 https://assetstore.unity.com/packages/2d/textures-materials/glass/stylized-grass-texture-153153
 
+VFX
+https://assetstore.unity.com/packages/vfx/particles/cartoon-fx-remaster-free-109565
+
+UI
+https://api.unity.com/v1/oauth2/authorize?cid=064e72a4-f499-4d82-9336-9b9a6037e2a4005f&event=next
+https://assetstore.unity.com/packages/2d/gui/icons/free-ui-pack-170878
+
 Animations - mixamo.com
 >GoalKeeper Sidestep
 >GoalKeeper Miss
