@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
+    public List<Transform> fireWorks;
     public bool calmDownMode;
     public bool goldenBall;
     public bool hideIndicator;
@@ -97,6 +98,9 @@ public class GameManager : MonoBehaviour
     public float pointsPerGoal=10;
 
     public Coroutine coroutineTimer;
+
+    public Transform tibanaAudioSource;
+
 
     //public bool canshoot;
     // Start is called before the first frame update
@@ -258,11 +262,7 @@ public class GameManager : MonoBehaviour
         ScoreController.instance.ShootResult("Lost");
 
     }
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 
     public IEnumerator ShootCoroutine()
     {
@@ -449,6 +449,17 @@ public class GameManager : MonoBehaviour
         scoreCounter = scoreCounter + multiplyScore*BasicScore+AdditionalScore;
         ScoreCounter.text = scoreCounter.ToString();
 
+        CanvasHandler.instance.animationPoints();
+
+    }
+
+    public void addGoal_Bonus(int value)
+    {
+        scoreCounter = scoreCounter + value;
+        ScoreCounter.text = scoreCounter.ToString();
+
+        CanvasHandler.instance.animationPoints();
+
     }
 
     private IEnumerator CountdownCoroutine(float startTime,bool applyDelay)
@@ -561,5 +572,16 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(1);
         PowerUpHandler.instnace.ResetPowerUp();
         Crowd.istance.UpdateState("Idle");
+
+        if(ScoreController.instance.ShootCounter>=15)
+        {
+            foreach(Transform fire in fireWorks)
+            {
+                fire.gameObject.SetActive(true);
+            }
+            mainSound.volume=mainSound.volume*0.5f;
+            tibanaAudioSource.gameObject.SetActive(true);
+            
+        }
     }
 }

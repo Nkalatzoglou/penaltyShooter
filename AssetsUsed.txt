@@ -24,6 +24,13 @@ https://assetstore.unity.com/packages/2d/textures-materials/glass/stylized-grass
 VFX
 https://assetstore.unity.com/packages/vfx/particles/cartoon-fx-remaster-free-109565
 
+Camera model
+https://www.turbosquid.com/3d-models/3d-spotlights-1995402
+
+Hat
+https://www.turbosquid.com/3d-models/basic-bucket-hat-genesis-8-male-zpac-obj-fbx-highpoly-2321319
+https://www.turbosquid.com/3d-models/free-cloak-cape-robe-3d-model/299477
+
 UI
 https://api.unity.com/v1/oauth2/authorize?cid=064e72a4-f499-4d82-9336-9b9a6037e2a4005f&event=next
 https://assetstore.unity.com/packages/2d/gui/icons/free-ui-pack-170878
@@ -48,7 +55,18 @@ https://freesound.org/people/volivieri/sounds/37155/
 https://opengameart.org/content/power-up-sound-effects
 https://pixabay.com/sound-effects/inhale-exhale-230173/
 https://pixabay.com/music/video-games-fast-paced-chiptune-song-for-video-games-227123/
+https://freesound.org/people/dersuperanton/sounds/434462/
+ElevenLabs.io voice Overs
+https://freesound.org/people/kirkpatrick.live/sounds/495338/
+https://www.youtube.com/watch?v=yLNALmt6KFs&ab_channel=Music%26SoundsEffectLibrary
+https://freesound.org/people/Garuda1982/sounds/417783/
+https://www.youtube.com/watch?v=aU4rdmAKvBU
+https://pixabay.com/sound-effects/bonus-points-190035/
 
 
 Main Menu
 Image and buttons generated with chatgpt
+
+
+> Maria Karavelaki- na vgei ( tha tn perasw)
+> Dakos - (ekswterikos sinergatis)

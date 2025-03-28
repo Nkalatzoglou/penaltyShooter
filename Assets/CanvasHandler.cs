@@ -20,6 +20,8 @@ public class CanvasHandler : MonoBehaviour
     public TextMeshProUGUI PowerUpExplnationDesription;
     public Image PowerUpSecondaryImage;
 
+    public Animator pointAnimator;
+
 
     private void Awake() {
         instance=this;
@@ -34,6 +36,14 @@ public class CanvasHandler : MonoBehaviour
     {
         
     }
+
+    public void animationPoints()
+    {
+        pointAnimator.enabled=true;
+        
+        pointAnimator.Play("ScorePopUp", 0, 0f);
+    }
+
 
     public void ActivateExplanation(PowerUp currentSelected)
     {

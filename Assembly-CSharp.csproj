@@ -98,6 +98,9 @@
      <Compile Include="Assets\LookAndEffect.cs" />
      <Compile Include="Assets\Crowd.cs" />
      <Compile Include="Assets\Spectator.cs" />
+     <Compile Include="Assets\TargetScoreHandler.cs" />
+     <Compile Include="Assets\puffEffect.cs" />
+     <Compile Include="Assets\AdditionalTargets.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\JMO Assets\Cartoon FX Remaster\CFXR Assets\Shaders\CFXR_SETTINGS.cginc" />
