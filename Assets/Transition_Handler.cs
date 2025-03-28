@@ -23,5 +23,15 @@ public class Transition_Handler : MonoBehaviour
         GameManager.gameManager.SceneChanger();
         GetComponent<Animator>().ResetTrigger("FadeOut");
         UIFadeOut.GetComponent<Animator>().ResetTrigger("FadeOut");
+
+    }
+
+
+    public void SecondChance()
+    {
+        if(GameManager.gameManager.SecondChance)
+        {
+            PowerUpHandler.instnace.Activate2ndChance_Vol2();
+        }
     }
 }

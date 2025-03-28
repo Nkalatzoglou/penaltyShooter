@@ -20,12 +20,20 @@ public class ball : MonoBehaviour
     public bool catchBall;
     public bool Scored;
 
+    public Transform catchEffect;
+
+    public bool impactDone=false;
+
+    public bool result=false;
+
     // Start is called before the first frame update
     void Start()
     {
         spawnerParent =transform.parent;
         rig= GetComponent<Rigidbody>();
         origTrans = transform.position;
+
+        catchEffect = transform.Find("Impact");
     }
 
     // Update is called once per frame
@@ -47,7 +55,7 @@ public class ball : MonoBehaviour
         StartCoroutine(despawnAfterTime(DespawnTime));
     }
 
-    public void ShootWithCurl(Transform target, Vector3 offPositionXY, Vector3 curlOffset, float curlForceMultiplier)
+    /* public void ShootWithCurl(Transform target, Vector3 offPositionXY, Vector3 curlOffset, float curlForceMultiplier)
     {
         transform.SetParent(null);
 
@@ -62,7 +70,7 @@ public class ball : MonoBehaviour
 
         // Step 3: Wait for the ball to reach or pass near the curl position
         StartCoroutine(ProceedToTarget(curlPosition, targetPosition));
-    }
+    } */
 
     private IEnumerator ProceedToTarget(Vector3 curlPosition, Vector3 targetPosition)
     {
@@ -103,7 +111,7 @@ public class ball : MonoBehaviour
             //Debug.Break();
             StartCoroutine(despawnAfterTime(2.0f));
         }
-        else if(other.gameObject.CompareTag("OutPost"))
+        else if(other.gameObject.CompareTag("OutPost") && Scored==false && !impactDone)
         {
             Debug.Log("OutTrigger" + other.gameObject.name);
             GameManager.gameManager.isPenaltyOutOrDokari();
@@ -126,10 +134,21 @@ public class ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision other) {
         //|| other.gameObject.name == "mixamorig:LeftHand" || other.gameObject.name == "mixamorig:RightHand"
+
+        //this is for effects
+        if((other.gameObject.name == "mixamorig:Hips" || other.gameObject.name == "mixamorig:LeftHand" || other.gameObject.name == "mixamorig:RightHand") && !impactDone)
+        {
+            impactDone=true;
+            catchEffect.SetParent(null);
+
+            catchEffect.gameObject.SetActive(true);
+        }
+
+
         if(other.gameObject.name == "mixamorig:Hips")
         {
             //
-            //Debug.Break();
+
             if(!catchBall)
             {
                 //Activate line stopper
@@ -181,7 +200,7 @@ public class ball : MonoBehaviour
         }
         else
         {
-            if(other.gameObject.CompareTag("Dokari"))
+            if(other.gameObject.CompareTag("Dokari") && Scored==false)
             {
                     Debug.Log("Dokari");
                     StartCoroutine(waitForGoal());
@@ -193,12 +212,21 @@ public class ball : MonoBehaviour
     
     
     IEnumerator despawnAfterTime(float DespawnTime)
-    {
+    {        
         yield return new WaitForSeconds(DespawnTime);
+        impactDone=false;
+        catchEffect.SetParent(this.transform);
+        catchEffect.transform.localPosition = Vector3.zero;
         DespawnBall();
     }
     public void DespawnBall()
     {
+        if(result==false)
+        {
+            ScoreController.instance.ShootResult("Out");
+        }
+
+        result=false;
         catchBall=false;
         Scored=false;
         rig.useGravity=true;

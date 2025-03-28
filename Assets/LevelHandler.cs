@@ -21,7 +21,7 @@ public class LevelHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(gameManager.shoot_Counter>=ShowBarAfterPenalty)
+        if(ScoreController.instance.ShootCounter>=ShowBarAfterPenalty)
         {
             player_Handler.ApplyForce=true;
         }

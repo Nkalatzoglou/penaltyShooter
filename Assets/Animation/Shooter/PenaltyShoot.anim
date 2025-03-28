@@ -62479,7 +62479,7 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.35
+  - time: 0.36666667
     functionName: StartCameraMovement
     data: 
     objectReferenceParameter: {fileID: 0}
@@ -62488,6 +62488,13 @@ AnimationClip:
     messageOptions: 0
   - time: 1.2166667
     functionName: ShootBallWithTarget_Sooner2
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 1.2833333
+    functionName: playEeehSound
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

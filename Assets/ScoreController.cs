@@ -10,6 +10,8 @@ public class ScoreController : MonoBehaviour
     public static ScoreController instance;
 
     public int ShootCounter;
+
+    public bool HaveResult;
     // Start is called before the first frame update
     private void Awake() {
         instance=this;
@@ -22,20 +24,35 @@ public class ScoreController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void ShootResult(string result)
     {
-        if(result=="Goal")
+        if(!HaveResult)
         {
-            UIScore[ShootCounter].color=Color.green;
-        }
-        else
-        {
-            UIScore[ShootCounter].color=Color.red;
-        }
+            GameManager.gameManager.currentBall.result=true;
+            if(result=="Goal")
+            {
+                UIScore[ShootCounter].color=Color.green;
+                PenaltyManager.instance.OnPlayerShoots(true);
+                Crowd.istance.UpdateState("Cheer");
+            }
+            else
+            {
+                UIScore[ShootCounter].color=Color.red;
+                PenaltyManager.instance.OnPlayerShoots(false);
+            }
 
-        ShootCounter++;
+            ShootCounter++;
+            HaveResult=true;
+        }
+        
+    }
+
+    public void substructOne()
+    {
+        ShootCounter--;
+        UIScore[ShootCounter].color=Color.white;
     }
 }

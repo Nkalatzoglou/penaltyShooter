@@ -30,6 +30,7 @@ public class PowerUpHandler : MonoBehaviour
     public Transform parentOfExplosion;
 
     [Header("Double Points")]
+    public AudioClip DoublePoints;
 
     [Header("Calm Down")]
 
@@ -49,6 +50,8 @@ public class PowerUpHandler : MonoBehaviour
 
     public int additionalPoints=100;
 
+    private float originalGamePlaySpeed;
+
     // Start is called before the first frame update
 
     private void Awake() 
@@ -59,6 +62,7 @@ public class PowerUpHandler : MonoBehaviour
     }
     void Start()
     {
+        originalGamePlaySpeed=GameManager.gameManager.gamespeed;
         AssignTwoAmount();
          AssignTwoAmount();
     }
@@ -86,46 +90,49 @@ public class PowerUpHandler : MonoBehaviour
     {
         RefereHumanoid.gameObject.SetActive(true);
         GameManager.gameManager.SecondChance=true;
-    }
 
-    //When release ball
-    public void Activate2ndChance_Vol2()
-    {
         RefereHumanoid.GetComponent<AudioSource>().PlayOneShot(sfirixta);
     }
 
+
     //When Reset Scene
-    public void Activate2ndChance_Vol3()
+    public void Activate2ndChance_Vol2()
     {
         UISfirixta2ndChance.gameObject.SetActive(true);
+
         RefereHumanoid.gameObject.SetActive(false);  
 
         StartCoroutine(SecondChance());      
     }
 
     IEnumerator SecondChance()
-    {
+    {        
+
         yield return new WaitForSeconds(secondToShowUi);
 
+        CanvasHandler.instance.PowerUpIndicator.GetComponent<Animator>().SetTrigger("Hide"); 
         UISfirixta2ndChance.gameObject.SetActive(false);
         GameManager.gameManager.SecondChance=false;
     }
 
     public void ActivateCalmDown()
     {
-        ForceBarHandler.instance.speed=0.5f;
-        GameManager.gameManager.mainSound.pitch=0.8f;
+        GameManager.gameManager.gamespeed=originalGamePlaySpeed*0.65f;
+        GameManager.gameManager.calmDownMode=true;
+        GameManager.gameManager.mainSound.pitch=0.9f;
     }
 
     public void DisableCalmDown()
     {
-        ForceBarHandler.instance.speed=ForceBarHandler.instance.OriginSpeed;
+        GameManager.gameManager.gamespeed=originalGamePlaySpeed;
+        GameManager.gameManager.calmDownMode=false;
         GameManager.gameManager.mainSound.pitch=1f;
     }
 
     public void ActivateDoublePoints()
     {
         GameManager.gameManager.multiplyScore=2;
+        audioSource.PlayOneShot(DoublePoints);  
     }
 
     public void DisactivateDoublePoints()
@@ -163,7 +170,8 @@ public class PowerUpHandler : MonoBehaviour
         particleBall_smoke.SetActive(true);
 
         //Gaolkeeper will go to correct place but the ball will pass through him
-        GameManager.gameManager.saveEverything=true;
+        GameManager.gameManager.saveShoot=true;
+        GameManager.gameManager.LooseShoot=false;
 
         //dissable Colliders
         GameManager.gameManager.goldenBall=true;
@@ -194,12 +202,34 @@ public class PowerUpHandler : MonoBehaviour
         BallParticle.gameObject.SetActive(false);
 
         particleCollisionPassThrought.transform.SetParent(parentOfExplosion);
+        particleCollisionPassThrought.transform.localPosition=Vector3.zero;
+    
 
         //Ball.material=BallOriginMat;
         //particleBall_smoke.SetActive(false);         
     
         particleCollisionPassThrought.gameObject.SetActive(false);   
     }
+
+     public void DissableAllPowerUps()
+    {
+        foreach(PowerUpItemHandler pUp in PowerUps)
+        {
+            pUp.GetComponent<Button>().interactable=false;
+        }
+    }
+
+     public void ActivateAllPowerUps()
+    {
+        foreach(PowerUpItemHandler pUp in PowerUps)
+        {
+            if(pUp.amount>0)
+            {
+                pUp.GetComponent<Button>().interactable=true;
+            }            
+        }
+    }
+
 
     public void SelectPowerUp(PowerUpItemHandler powerUp)
     {
@@ -225,8 +255,10 @@ public class PowerUpHandler : MonoBehaviour
                     case "Catch the Bird":
                         break;
                     case "Calm Down":
+                        ActivateCalmDown();
                         break;
                     case "2nd Chance":
+                        Activate2ndChance_Vol1();
                         break;                        
                 }
                 pUp.amount--;

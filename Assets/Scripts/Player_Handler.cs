@@ -41,12 +41,21 @@ public class Player_Handler : MonoBehaviour
     private Vector3 threshold_parent_origPos;
     private Vector3 target_origPos;
 
+    public AudioSource audioSource;
+
+    public AudioClip inhale;
+    public AudioClip exhale;
+
+    public Animator ShooterAnimator;
+    
+
     //Bool to run AI once and reset to rerun when needed
     private bool AICor;
     public bool ApplyForce;
     
     void Start()
     {
+        audioSource=GetComponent<AudioSource>();
         gamemanager=GameManager.gameManager;
         target_origPos = gamemanager.input_Target.transform.position;
         threshold_parent_origPos = gamemanager.XMaxLeft.parent.position;
@@ -88,6 +97,17 @@ public class Player_Handler : MonoBehaviour
 
     }
 
+    private IEnumerator ShootBallAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        
+        ShooterAnimator.speed=1f; 
+        gamemanager.execute_Shoot(ApplyForce,CanvasHandler.instance.StopBar());
+        
+        
+        
+    }
+
     public void Update_Shooter()
     {
         //if not AI
@@ -106,6 +126,8 @@ public class Player_Handler : MonoBehaviour
                     StartCoroutine(MoveObject(threshold,threshold,newYpos,VecticalTimeO));
                 }
             }
+
+            var originalAnimatorSpeed=ShooterAnimator.speed;
             if(Input.GetMouseButtonUp(0) && ButtonPress==1)
             {
                 //No Force Options
@@ -117,6 +139,8 @@ public class Player_Handler : MonoBehaviour
                 else
                 {
                     StopAllCoroutines();
+                    audioSource.PlayOneShot(inhale);  
+                    ShooterAnimator.speed=0f;
                     CanvasHandler.instance.forceBarHandler.gameObject.SetActive(true);
                     CanvasHandler.instance.ActivateForceBar();
                     GameManager.gameManager.shooter_Handler.forceChangeDirection=Vector3.zero;
@@ -125,9 +149,12 @@ public class Player_Handler : MonoBehaviour
             }
             if(Input.GetMouseButtonDown(0) && ButtonPress==2)
             {
+                
+            
                 //selectedTarget must be recalculated
-                Debug.Log("Force Selected :" + CanvasHandler.instance.StopBar().ToString());  
-                gamemanager.execute_Shoot(ApplyForce,CanvasHandler.instance.StopBar());              
+                Debug.Log("Force Selected :" + CanvasHandler.instance.StopBar().ToString()); 
+                audioSource.PlayOneShot(exhale); 
+                StartCoroutine(ShootBallAfterDelay(1f));   
             }
         }
         else

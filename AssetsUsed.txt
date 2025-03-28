@@ -1,3 +1,6 @@
+Players
+https://www.mixamo.com/#/?page=2&type=Character
+
 Stadium
 https://www.turbosquid.com/3d-models/soccer-stadium-3d-model-1862694
 
@@ -35,6 +38,16 @@ Animations - mixamo.com
 >GoalKeeper Body Block
 >Soccer Penalty Hick
 >GoalKeeper Game Pack(54 Animations)
+
+Sounds:
+https://pixabay.com/sound-effects/cyber-town-simcity-style-music-22907/
+https://freesound.org/people/Rosa-Orenes256/sounds/538422/
+https://freesound.org/people/LiamG_SFX/sounds/322497/
+https://freesound.org/people/Mrthenoronha/sounds/544886/
+https://freesound.org/people/volivieri/sounds/37155/
+https://opengameart.org/content/power-up-sound-effects
+https://pixabay.com/sound-effects/inhale-exhale-230173/
+https://pixabay.com/music/video-games-fast-paced-chiptune-song-for-video-games-227123/
 
 
 Main Menu

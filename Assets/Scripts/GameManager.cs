@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
+    public bool calmDownMode;
     public bool goldenBall;
     public bool hideIndicator;
     public AudioSource mainSound;
@@ -17,7 +18,7 @@ public class GameManager : MonoBehaviour
     public int AdditionalScore=0;
 
     [Header("Keep Scores - UI")]
-    public int shoot_Counter;
+    //public int shoot_Counter;
     public int goal_Counter;
     public TextMeshProUGUI ScoreCounter;
 
@@ -169,7 +170,10 @@ public class GameManager : MonoBehaviour
     {
 
         mainCam.transform.position = cameraOrigPos;
+        mainCam.transform.GetChild(0).position =cameraOrigPos;
+
         mainCam.fieldOfView = fieldOfView;
+          mainCam.transform.GetChild(0).GetComponent<Camera>().fieldOfView= fieldOfView;
 
         StartCoroutine(CountdownCoroutine(15,true));
     }
@@ -187,10 +191,12 @@ public class GameManager : MonoBehaviour
         while (time < duration)
         {
             mainCam.transform.position = Vector3.Lerp(startPosition, targetPosition, time / duration);
+            mainCam.transform.GetChild(0).position = Vector3.Lerp(startPosition, targetPosition, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
         mainCam.transform.position = targetPosition;
+        mainCam.transform.GetChild(0).position = targetPosition;
     }
 
     IEnumerator LerpCmeraZoom(float endValue, float duration)
@@ -200,10 +206,12 @@ public class GameManager : MonoBehaviour
         while (time < duration)
         {
             mainCam.fieldOfView = Mathf.Lerp(startValue, endValue, time / duration);
+             mainCam.transform.GetChild(0).GetComponent<Camera>().fieldOfView = Mathf.Lerp(startValue, endValue, time / duration);
             time += Time.deltaTime;
             yield return null;
         }
         mainCam.fieldOfView = endValue;
+         mainCam.transform.GetChild(0).GetComponent<Camera>().fieldOfView= endValue;
     }
 
     public void isPenaltySaved()
@@ -221,7 +229,6 @@ public class GameManager : MonoBehaviour
 
         ScoreController.instance.ShootResult("Lost");
 
-        shoot_Counter++;
 
     }
 
@@ -231,7 +238,6 @@ public class GameManager : MonoBehaviour
         PenaltyKicker.GetComponent<Animator>().SetTrigger("Victory");
         ScoreController.instance.ShootResult("Goal");
 
-        shoot_Counter++;
     }
 
     public void isPenaltyOutOrDokari()
@@ -251,7 +257,6 @@ public class GameManager : MonoBehaviour
 
         ScoreController.instance.ShootResult("Lost");
 
-        shoot_Counter++;
     }
     // Update is called once per frame
     void Update()
@@ -274,19 +279,23 @@ public class GameManager : MonoBehaviour
         trans_Handler.GetComponent<Animator>().SetTrigger("FadeOut");
         trans_Handler.UIFadeOut.GetComponent<Animator>().SetTrigger("FadeOut");
         
-        //set capture status
-        int cointFlip=Random.Range(0,100);
+        PowerUpHandler.instnace.DissableAllPowerUps();
+        
+        if(ScoreController.instance.ShootCounter==0)
+        {
+            var coinflip = Random.Range(0,100);
+            if(coinflip<50)
+            {
+                saveShoot=true;
+                LooseShoot=false;
+            }
+            else
+            {
+                saveShoot=false;
+                LooseShoot=true;
+            }
+        }
 
-        if(cointFlip>30)
-        {
-            LooseShoot=true;
-            saveShoot=false;
-        }
-        else
-        {
-            LooseShoot=false;
-            saveShoot=true;
-        }
 
         if(saveEverything)
         {
@@ -294,7 +303,7 @@ public class GameManager : MonoBehaviour
             saveShoot=true;
         }
 
-        if(shoot_Counter==20)
+        if(ScoreController.instance.ShootCounter==20)
         {
             endScreen.gameObject.SetActive(true);
             Time.timeScale=0;
@@ -341,7 +350,10 @@ public class GameManager : MonoBehaviour
     }
 
     public void execute_Shoot(bool applyForce,float force)
-    {        
+    {      
+        
+        PowerUpHandler.instnace.DisableCalmDown(); 
+
         if(hideIndicator)
         {
             CanvasHandler.instance.PowerUpIndicator.GetComponent<Animator>().SetTrigger("Hide"); 
@@ -405,7 +417,7 @@ public class GameManager : MonoBehaviour
         return offDire;
     }
 
-    public void Activate_SaveEverything()
+/*     public void Activate_SaveEverything()
     {
         if(saveShoot &&  target_handler.currentSelection!=null)
         {
@@ -419,7 +431,7 @@ public class GameManager : MonoBehaviour
         {
             target_handler.currentSelection.GetComponent<BoxCollider>().isTrigger=true;
         }
-    }
+    } */
 
     public void goalKeeperSave_AI()
     {
@@ -491,6 +503,9 @@ public class GameManager : MonoBehaviour
 
     public void SceneChanger()
     {
+
+        PenaltyManager.instance.DecideGoalkeeperBehavior( ScoreController.instance.ShootCounter,20,GameManager.gameManager.goal_Counter);
+        ScoreController.instance.HaveResult=false;
         //Debug.Log("Reset Scene");
         
         //before shooting
@@ -499,7 +514,6 @@ public class GameManager : MonoBehaviour
         //scene changer coroutine
         //Reset Scene
         goldenBall=false;
-        PowerUpHandler.instnace.ResetPowerUp();
 
         PowerUpHandler.instnace.DisableGoldenBall();
         PowerUpHandler.instnace.DisactivateDoublePoints();
@@ -515,7 +529,7 @@ public class GameManager : MonoBehaviour
         checkGoal = false;
 
         PenaltyKicker.shooting=false;
-        Disactivate_SaveEverything();
+        //Disactivate_SaveEverything();
         ballSpawner.SpawnBall();
         DisActivate_Stopper();
         //continue shooting
@@ -530,5 +544,22 @@ public class GameManager : MonoBehaviour
         {
             Player_Handler.Activate_AI();
         }
+
+        if(SecondChance)
+        {            
+            ScoreController.instance.substructOne();
+
+        }
+
+        StartCoroutine(waitBeforeActivate());
+        
+    }
+
+
+    public IEnumerator waitBeforeActivate()
+    {
+        yield return new WaitForSeconds(1);
+        PowerUpHandler.instnace.ResetPowerUp();
+        Crowd.istance.UpdateState("Idle");
     }
 }

@@ -17,12 +17,26 @@ public class Shooter_Handler : MonoBehaviour
     public Animator FadeOutScene;
 
     public Vector3 forceChangeDirection;
+
+    public AudioClip shootBall;
+    public AudioClip EehhSound;
+
+    public AudioSource audioSource;
+
+    public AudioSource audioSourceVoice;
+
+    public GameObject LeafsEffect;
+
+    public List<AudioClip> LostVoice;
+
+    public List<AudioClip> WinVoice;
     //public RigBuilder rig;
     // Start is called before the first frame update
     void Start()
     {
         gamemanger = GameManager.gameManager;
         animator = GetComponent<Animator>();
+        audioSource=GetComponent<AudioSource>();
 
 
     }
@@ -33,14 +47,36 @@ public class Shooter_Handler : MonoBehaviour
         
     }
 
+     public void playLostSound()
+    {
+        audioSource.pitch=1f;
+        if (LostVoice.Count == 0 || audioSource == null) return;
+
+        int randomIndex = Random.Range(0, LostVoice.Count);
+        audioSourceVoice.PlayOneShot(LostVoice[randomIndex]);
+    }
+
+     public void playWinSound()
+    {
+        audioSource.pitch=1f;
+        if (WinVoice.Count == 0 || audioSource == null) return;
+
+        int randomIndex = Random.Range(0, WinVoice.Count);
+        audioSourceVoice.PlayOneShot(WinVoice[randomIndex]);
+    }
+
+
+    public void playEeehSound()
+    {
+        var pitchSound = Mathf.Round(Random.Range(0.6f, 1.4f) * 10f) / 10f;
+        Debug.Log("pitchSound " + pitchSound);
+        audioSource.pitch = pitchSound;
+        audioSource.PlayOneShot(EehhSound);
+    }
+
     public void StartFadeOut()
     {
         FadeOutScene.SetTrigger("SceneTransition");
-    }
-
-    public void ShootBall()
-    {
-        GameManager.gameManager.currentBall.ShootForce_Forward();
     }
 
     public void StartCameraMovement()
@@ -55,6 +91,12 @@ public class Shooter_Handler : MonoBehaviour
     public void FinishedAnimation()
     {
         gamemanger.PenaltyKickerFinished=true;
+    }
+
+    
+    public void ShootBall()
+    {
+        GameManager.gameManager.currentBall.ShootForce_Forward();        
     }
     
     public void ShootBallWithTarget()
@@ -74,7 +116,8 @@ public class Shooter_Handler : MonoBehaviour
         if(!animationStarted && gamemanger.target_handler.whatSide()!="LowTop")
         {
             activateAI_Save();
-        }        
+        }   
+  
     }
 
     public void ShootBallWithTarget_Sooner1()
@@ -85,19 +128,26 @@ public class Shooter_Handler : MonoBehaviour
             //gamemanger.currentBall.ShootForce_Direction(target);
             activateAI_Save();
             animationStarted=true;
+
         }
+
+        
        
     }
 
     
     public void ShootBallWithTarget_Sooner2()
     {
+        //audioSource.pitch=1;
+        audioSource.PlayOneShot(shootBall);
+        LeafsEffect.gameObject.SetActive(true); 
+
         if(GameManager.gameManager.target_handler.whatSide()=="LowMiddle")
         {            
             var target= gamemanger.Player_Handler.selectedTarget;
             //gamemanger.currentBall.ShootForce_Direction(target);
             activateAI_Save();
-            animationStarted=true;
+            animationStarted=true;            
         }
         
     }
@@ -110,6 +160,7 @@ public class Shooter_Handler : MonoBehaviour
             //gamemanger.currentBall.ShootForce_Direction(target);
             activateAI_Save();
             animationStarted=true;
+ 
         }        
     }
 
@@ -126,6 +177,7 @@ public class Shooter_Handler : MonoBehaviour
             //gamemanger.currentBall.ShootForce_Direction(target);
             activateAI_Save();
             animationStarted=true;
+
         }        
     }
 
@@ -141,6 +193,7 @@ public class Shooter_Handler : MonoBehaviour
         shooting = true;
         animator.SetTrigger("Shoot");
     }
+
 
     public void stopShootBallAnimation()
     {
