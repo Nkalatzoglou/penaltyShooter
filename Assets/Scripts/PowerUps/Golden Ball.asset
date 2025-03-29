@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Golden Ball
   powerUpImage: {fileID: 21300000, guid: 516ccaaf775a89244895183610792dd2, type: 3}
-  description: Guarantees a successful goal for the next shot.
+  description: Guarantees a successful goal for the next shot.You can use it any
+    time!

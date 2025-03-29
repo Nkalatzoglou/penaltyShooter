@@ -55,6 +55,7 @@ public class Player_Handler : MonoBehaviour
     
     void Start()
     {
+        horizontalSpeed=2.5f;
         audioSource=GetComponent<AudioSource>();
         gamemanager=GameManager.gameManager;
         target_origPos = gamemanager.input_Target.transform.position;

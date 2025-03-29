@@ -22,6 +22,11 @@ public class CanvasHandler : MonoBehaviour
 
     public Animator pointAnimator;
 
+    public Transform TargetTutorial;
+    public Transform TargetHit;
+    public Transform ForceTutorial;
+    public Transform AddPowerUp;
+    public Image AddPowerUp_Image;
 
     private void Awake() {
         instance=this;
@@ -44,11 +49,67 @@ public class CanvasHandler : MonoBehaviour
         pointAnimator.Play("ScorePopUp", 0, 0f);
     }
 
+    public void showPowerUpAdd(PowerUp item)
+    {
+        AddPowerUp_Image.sprite=item.powerUpImage;
+        AddPowerUp.gameObject.SetActive(true);
+         StartCoroutine(DisableExaplnationFast(AddPowerUp));
+    }
+
+
+    public void ActivateHelper(string helperName)
+    {
+        if(!GameManager.gameManager.DisActivateHelpers)
+        {
+            Transform UIObject=null;
+            if(helperName=="TargetTutorial")
+            {
+                UIObject=TargetTutorial;
+            }
+            else if(helperName=="TargetHit")
+            {
+                UIObject=TargetHit;
+            }
+            else if(helperName=="ForceTutorial")
+            {
+                UIObject=ForceTutorial;
+            }        
+            
+
+            UIObject.gameObject.SetActive(true);
+            StartCoroutine(DisableExaplnation(UIObject));
+        }
+        
+    }
+
+    public IEnumerator DisableExaplnationFast(Transform UIObject)
+    {
+        GameManager.gameManager.pauseTimer=true;
+        yield return new WaitForSeconds(3);
+        GameManager.gameManager.pauseTimer=false; 
+        UIObject.gameObject.SetActive(false);     
+    }
+
+    public IEnumerator DisableExaplnation(Transform UIObject)
+    {
+        GameManager.gameManager.pauseTimer=true;
+        yield return new WaitForSeconds(9);
+        GameManager.gameManager.pauseTimer=false; 
+        UIObject.gameObject.SetActive(false);     
+    }
 
     public void ActivateExplanation(PowerUp currentSelected)
     {
-        PowerUpExplanation.gameObject.SetActive(true);
-        SetExplanation(currentSelected);
+        if(!GameManager.gameManager.DisActivateHelpers)
+        {
+            PowerUpExplanation.gameObject.SetActive(true);
+            SetExplanation(currentSelected);
+        }
+        else
+        {
+            PowerUpHandler.instnace.AddPowerUp(currentSelected.name);
+        }
+        
     }
         
 
@@ -56,7 +117,17 @@ public class CanvasHandler : MonoBehaviour
     {
         PowerUpExplnationName.text=currentSelected.name;
         PowerUpExplnationDesription.text=currentSelected.description;
-        PowerUpSecondaryImage.sprite=currentSelected.powerUpImage;        
+        PowerUpSecondaryImage.sprite=currentSelected.powerUpImage;
+        StartCoroutine(DisableExaplnation(currentSelected));     
+    }
+
+    public IEnumerator DisableExaplnation(PowerUp currentSelected)
+    {
+        GameManager.gameManager.pauseTimer=true;
+        yield return new WaitForSeconds(9);
+        PowerUpHandler.instnace.AddPowerUp(currentSelected.name);
+        GameManager.gameManager.pauseTimer=false; 
+        PowerUpExplanation.gameObject.SetActive(false);     
     }
 
     public void ActivateIndicator(PowerUp currentSelected)

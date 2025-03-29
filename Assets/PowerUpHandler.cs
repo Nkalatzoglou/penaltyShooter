@@ -63,8 +63,6 @@ public class PowerUpHandler : MonoBehaviour
     void Start()
     {
         originalGamePlaySpeed=GameManager.gameManager.gamespeed;
-        AssignTwoAmount();
-         AssignTwoAmount();
     }
 
     // Update is called once per frame
@@ -75,13 +73,11 @@ public class PowerUpHandler : MonoBehaviour
 
     public void ActivateFlyingBird()
     {
-        GameManager.gameManager.AdditionalScore=additionalPoints;
         Bird.gameObject.SetActive(true);
     }
 
     public void DisableFlyingBird()
     {
-        GameManager.gameManager.AdditionalScore=0;
         Bird.gameObject.SetActive(false);
     }
 
@@ -158,6 +154,7 @@ public class PowerUpHandler : MonoBehaviour
                 pUp.amount++;
                 Debug.Log("test");
                 pUp.UpdateTextAmount();
+                pUp.GetComponent<Button>().interactable=true;
             }
         }
     }
@@ -253,6 +250,7 @@ public class PowerUpHandler : MonoBehaviour
                         ActivateDoublePoints();
                         break;
                     case "Catch the Bird":
+                        ActivateFlyingBird();
                         break;
                     case "Calm Down":
                         ActivateCalmDown();

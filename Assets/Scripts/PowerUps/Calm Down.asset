@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Calm Down
   powerUpImage: {fileID: 21300000, guid: e0f4c7710430ebe448ce6d23149026c9, type: 3}
-  description: Slows down the power bar for easier accuracy.
+  description: Slows down the power bar for easier accuracy.You can use it any time!

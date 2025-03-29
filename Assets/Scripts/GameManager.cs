@@ -6,7 +6,17 @@ using UnityEditor;
 using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
-{
+{    public bool GoalMade;
+    public bool DisActivateHelpers;
+    public bool round2ndChance17;
+    public bool round2ndChance9;
+    public PowerUp GoldenBall;
+    public PowerUp DoublePoints;
+    public PowerUp FlyingBird;
+    public PowerUp SecondChange;
+    public PowerUp Slowtime;
+    
+    public bool pauseTimer=true;
     public List<Transform> fireWorks;
     public bool calmDownMode;
     public bool goldenBall;
@@ -101,7 +111,24 @@ public class GameManager : MonoBehaviour
 
     public Transform tibanaAudioSource;
 
+    public Transform helpersWindow;
 
+
+    public void EnableHelpers()
+    {
+        pauseTimer=false;
+        helpersWindow.gameObject.SetActive(false);
+        DisActivateHelpers=false;
+
+        CanvasHandler.instance.ActivateHelper("TargetTutorial");
+    }
+
+    public void DissableHelpers()
+    {
+        pauseTimer=false;
+        helpersWindow.gameObject.SetActive(false);
+        DisActivateHelpers=true;
+    }
     //public bool canshoot;
     // Start is called before the first frame update
     private void Awake() {
@@ -115,6 +142,16 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        DisActivateHelpers=true;
+        PowerUpHandler.instnace.DissableAllPowerUps();
+
+        if(!DisActivateHelpers)
+        {
+            CanvasHandler.instance.ActivateHelper("TargetTutorial");
+        }
+        
+
+        
         if(coroutineTimer==null)
         {
             coroutineTimer=StartCoroutine(CountdownCoroutine(15f,false));
@@ -445,6 +482,7 @@ public class GameManager : MonoBehaviour
 
     public void addGoal()
     {
+        GoalMade=true;        
         goal_Counter =goal_Counter+1;
         scoreCounter = scoreCounter + multiplyScore*BasicScore+AdditionalScore;
         ScoreCounter.text = scoreCounter.ToString();
@@ -473,15 +511,21 @@ public class GameManager : MonoBehaviour
         // Loop until the timer reaches zero
         while (timer > 0)
         {
-            // Update the countdown text
-            var timerText=(int)timer;
-            countdownText.text = timerText.ToString(); // Displaying one decimal place
+            if(!pauseTimer)
+            {
+                // Update the countdown text
+                var timerText=(int)timer;
+                countdownText.text = timerText.ToString(); // Displaying one decimal place
+
+                
+
+                // Decrease the timer by 0.1 each time (you can adjust this to your needs)
+                timer -= 0.1f;
+            }
 
             // Wait for a short period before updating again
             yield return new WaitForSeconds(0.1f); 
-
-            // Decrease the timer by 0.1 each time (you can adjust this to your needs)
-            timer -= 0.1f;
+            
         }
 
         // Ensure the countdown reaches zero exactly and display "0"
@@ -489,6 +533,8 @@ public class GameManager : MonoBehaviour
         
         // Optionally, you can add a callback or trigger an event when the countdown is complete
         Debug.Log("Countdown finished!");
+
+        execute_Shoot(false,0);
     }
 
     /*
@@ -514,7 +560,7 @@ public class GameManager : MonoBehaviour
 
     public void SceneChanger()
     {
-
+        AdditionalTargets.instance.dissactivateAll();
         PenaltyManager.instance.DecideGoalkeeperBehavior( ScoreController.instance.ShootCounter,20,GameManager.gameManager.goal_Counter);
         ScoreController.instance.HaveResult=false;
         //Debug.Log("Reset Scene");
@@ -528,6 +574,7 @@ public class GameManager : MonoBehaviour
 
         PowerUpHandler.instnace.DisableGoldenBall();
         PowerUpHandler.instnace.DisactivateDoublePoints();
+         PowerUpHandler.instnace.DisableFlyingBird();
 
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Defeat1");
         PenaltyKicker.GetComponent<Animator>().ResetTrigger("Defeat2");
@@ -556,12 +603,12 @@ public class GameManager : MonoBehaviour
             Player_Handler.Activate_AI();
         }
 
-        if(SecondChance)
+        if(SecondChance && !GoalMade)
         {            
             ScoreController.instance.substructOne();
 
         }
-
+        GoalMade=false;
         StartCoroutine(waitBeforeActivate());
         
     }
@@ -573,6 +620,99 @@ public class GameManager : MonoBehaviour
         PowerUpHandler.instnace.ResetPowerUp();
         Crowd.istance.UpdateState("Idle");
 
+
+        switch(ScoreController.instance.ShootCounter)
+                {
+                    case 0:
+                        
+                        break;
+                    case 1:
+                        Player_Handler.horizontalSpeed=2.4f;
+                        break;
+                    case 2:
+                        Player_Handler.horizontalSpeed=2.3f;
+                        CanvasHandler.instance.ActivateHelper("TargetHit");
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        break;
+                    case 3:
+                        CanvasHandler.instance.ActivateHelper("ForceTutorial");
+                        Player_Handler.ApplyForce=true;
+                        Player_Handler.horizontalSpeed=2f;
+                        break;
+                    case 4:
+
+                        break;
+                    case 5:
+                        Player_Handler.horizontalSpeed=1.9f;
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        CanvasHandler.instance.ActivateExplanation(DoublePoints);
+                        break;
+                    case 6:
+                        Player_Handler.horizontalSpeed=1.8f;
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        CanvasHandler.instance.ActivateExplanation(Slowtime);
+                        break;     
+                    case 7:
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        break;   
+                    case 8:
+                        CanvasHandler.instance.ActivateExplanation(GoldenBall);
+                        Player_Handler.horizontalSpeed=1.7f;
+                        break;
+                    case 9:
+                        if(!round2ndChance9)
+                        {
+                            round2ndChance9=true;
+                            AdditionalTargets.instance.ActicateRandomTarget();
+                            CanvasHandler.instance.ActivateExplanation(SecondChange);
+                        }                        
+                        break;     
+                    case 10:
+                        Player_Handler.horizontalSpeed=1.6f;
+                        break; 
+                    case 11:
+                      
+                        break;
+                    case 12:
+                        CanvasHandler.instance.ActivateExplanation(FlyingBird);
+                        Player_Handler.horizontalSpeed=1.5f;
+                        break;
+                    case 13:
+                        
+                        break;
+                    case 14:
+                        CanvasHandler.instance.showPowerUpAdd(GoldenBall);
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        PowerUpHandler.instnace.AddPowerUp(GoldenBall.name);
+                        break;
+                    case 15:
+                        Player_Handler.horizontalSpeed=1.45f;
+                        CanvasHandler.instance.showPowerUpAdd(Slowtime);
+                        PowerUpHandler.instnace.AddPowerUp(Slowtime.name);
+                        break;
+                    case 16:
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        break;     
+                    case 17:
+                        if(!round2ndChance17)
+                        {
+                            round2ndChance17=true;
+                            CanvasHandler.instance.showPowerUpAdd(SecondChange);
+                            PowerUpHandler.instnace.AddPowerUp(SecondChange.name);
+                        }
+                        
+                        break;   
+                    case 18:
+                        AdditionalTargets.instance.ActicateRandomTarget();
+                        PowerUpHandler.instnace.AddPowerUp(DoublePoints.name);
+                        break;
+                    case 19:  
+
+                        break;               
+                                
+                }
+
+        //method to add new things each turn.
         if(ScoreController.instance.ShootCounter>=15)
         {
             foreach(Transform fire in fireWorks)

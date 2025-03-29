@@ -26,9 +26,12 @@ public class ball : MonoBehaviour
 
     public bool result=false;
 
+    public Material originalBallMat;
+
     // Start is called before the first frame update
     void Start()
     {
+        originalBallMat= transform.GetChild(0).GetComponent<MeshRenderer>().materials[0];
         spawnerParent =transform.parent;
         rig= GetComponent<Rigidbody>();
         origTrans = transform.position;
@@ -225,6 +228,11 @@ public class ball : MonoBehaviour
         {
             ScoreController.instance.ShootResult("Out");
         }
+
+        MeshRenderer rend = transform.GetChild(0).GetComponent<MeshRenderer>();
+        Material[] mats = rend.materials;
+        mats[0] = originalBallMat;
+        rend.materials = mats; // assign the modified array back
 
         result=false;
         catchBall=false;

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: 2nd Chance
   powerUpImage: {fileID: 21300000, guid: fe2f5ec2ca1931f4c883c96f48bdcca9, type: 3}
-  description: Allows players to retake a missed shot.
+  description: Allows players to retake a missed shot. You can use it any time!

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   powerUpName: Double Points
   powerUpImage: {fileID: 21300000, guid: 5f4baacdc1c9d604ea634e998f512cde, type: 3}
-  description: Doubles the score for the next shot.
+  description: Doubles the score for the next shot.You can use it any time!

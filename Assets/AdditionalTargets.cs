@@ -16,6 +16,15 @@ public class AdditionalTargets : MonoBehaviour
     {
         GetRandomTarget().gameObject.SetActive(true);
     }
+
+    public void dissactivateAll()
+    {
+        foreach(Transform target in TotalTargets)
+        {
+            target.gameObject.SetActive(false);
+        }
+    
+    }
     // Start is called before the first frame update
     void Start()
     {
